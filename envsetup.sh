@@ -14,6 +14,7 @@ Invoke ". build/envsetup.sh" from your shell to add the following functions to y
 - cgrep:     Greps on all local C/C++ files.
 - ggrep:     Greps on all local Gradle files.
 - jgrep:     Greps on all local Java files.
+- repopick: Utility to fetch changes from Gerrit.
 - resgrep:   Greps on all local res/*.xml files.
 - mangrep:   Greps on all local AndroidManifest.xml files.
 - mgrep:     Greps on all local Makefiles files.
@@ -1549,7 +1550,16 @@ function mka() {
     esac
 }
 
+function repopick() {
+    T=$(gettop)
+    $T/build/tools/repopick.py $@
+}
+
 # Force JAVA_HOME to point to java 1.7/1.8 if it isn't already set.
+#
+# Note that the MacOS path for java 1.7 includes a minor revision number (sigh).
+# For some reason, installing the JDK doesn't make it show up in the
+# JavaVM.framework/Versions/1.7/ folder.
 function set_java_home() {
     # Clear the existing JAVA_HOME value if we set it ourselves, so that
     # we can reset it later, depending on the version of java the build
