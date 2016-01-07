@@ -69,6 +69,10 @@ define $(combo_var_prefix)transform-shared-lib-to-toc
 $(call _gen_toc_command_for_elf,$(1),$(2))
 endef
 
+ifeq ($(strip $(KERNEL_TOOLCHAIN)),)
+KERNEL_TOOLCHAIN := $(PWD)/$(TARGET_TOOLCHAIN_ROOT)-kernel/bin
+endif
+
 TARGET_NO_UNDEFINED_LDFLAGS := -Wl,--no-undefined
 
 TARGET_GLOBAL_CFLAGS += \
