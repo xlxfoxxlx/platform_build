@@ -643,7 +643,6 @@ def GetKeyPasswords(keylist):
   key_passwords.update(dict.fromkeys(no_passwords, None))
   return key_passwords
 
-
 def GetMinSdkVersion(apk_name):
   """Get the minSdkVersion delared in the APK. This can be both a decimal number
   (API Level) or a codename.
@@ -681,9 +680,7 @@ def GetMinSdkVersionInt(apk_name, codename_to_api_level_map):
                           % (version, codename_to_api_level_map))
 
 
-def SignFile(input_name, output_name, key, password, min_api_level=None,
-    codename_to_api_level_map=dict(),
-    whole_file=False):
+def SignFile(input_name, output_name, key, password, whole_file=False):
   """Sign the input_name zip/jar/apk, producing output_name.  Use the
   given key and password (the latter may be None if the key does not
   have a password.
@@ -729,7 +726,6 @@ def SignFile(input_name, output_name, key, password, min_api_level=None,
   p.communicate(password)
   if p.returncode != 0:
     raise ExternalError("signapk.jar failed: return code %s" % (p.returncode,))
-
 
 def CheckSize(data, target, info_dict):
   """Check the data string passed against the max size limit, if
