@@ -26,7 +26,6 @@ PRODUCT_PACKAGES := \
 	Fallback \
 	Gallery \
 	GestureBuilder \
-	Launcher3 \
 	librs_jni \
 	LiveWallpapersPicker \
 	Mms \
