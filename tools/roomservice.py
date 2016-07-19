@@ -43,7 +43,7 @@ DEBUG = False
 default_manifest = ".repo/manifest.xml"
 
 custom_local_manifest = ".repo/local_manifests/aosip_manifest.xml"
-custom_default_revision = "mm6.0" # or oms or caf
+custom_default_revision = "oms" # or oms or caf
 custom_dependencies = "aosip.dependencies"
 org_manifest = "AOSiP-Devices"  # leave empty if org is provided in manifest
 org_display = "AOSiP-Devices"  # needed for displaying
