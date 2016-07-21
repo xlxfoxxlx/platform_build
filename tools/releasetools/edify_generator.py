@@ -133,6 +133,11 @@ class EdifyGenerator(object):
            ");")
     self.script.append(self.WordWrap(cmd))
 
+  def FlashSuperSU(self):
+    self.script.append('package_extract_dir("supersu", "/tmp/supersu");')
+    self.script.append('run_program("/sbin/busybox", "unzip", "/tmp/supersu/supersu.zip", "META-INF/com/google/android/*", "-d", "/tmp/supersu");')
+    self.script.append('run_program("/sbin/busybox", "sh", "/tmp/supersu/META-INF/com/google/android/update-binary", "dummy", "1", "/tmp/supersu/supersu.zip");')
+
   def RunBackup(self, command):
     self.script.append('package_extract_file("system/bin/backuptool.sh", "/tmp/backuptool.sh");')
     self.script.append('package_extract_file("system/bin/backuptool.functions", "/tmp/backuptool.functions");')
@@ -146,11 +151,6 @@ class EdifyGenerator(object):
     if command == "restore":
         self.script.append('delete("/system/bin/backuptool.sh");')
         self.script.append('delete("/system/bin/backuptool.functions");')
-
-  def FlashSuperSU(self):
-    self.script.append('package_extract_dir("supersu", "/tmp/supersu");')
-    self.script.append('run_program("/sbin/busybox", "unzip", "/tmp/supersu/supersu.zip", "META-INF/com/google/android/*", "-d", "/tmp/supersu");')
-    self.script.append('run_program("/sbin/busybox", "sh", "/tmp/supersu/META-INF/com/google/android/update-binary", "dummy", "1", "/tmp/supersu/supersu.zip");')
 
   def ShowProgress(self, frac, dur):
     """Update the progress bar, advancing it over 'frac' over the next
@@ -337,10 +337,10 @@ class EdifyGenerator(object):
     if not self.info.get("use_set_metadata", False):
       self.script.append('set_perm(%d, %d, 0%o, "%s");' % (uid, gid, mode, fn))
     else:
-      cmd = 'set_metadata("%s", "uid", %d, "gid", %d, "mode", 0%o' \
-          % (fn, uid, gid, mode)
-      if capabilities is not None:
-        cmd += ', "capabilities", %s' % ( capabilities )
+      if capabilities is None:
+        capabilities = "0x0"
+      cmd = 'set_metadata("%s", "uid", %d, "gid", %d, "mode", 0%o, ' \
+          '"capabilities", %s' % (fn, uid, gid, mode, capabilities)
       if selabel is not None:
         cmd += ', "selabel", "%s"' % selabel
       cmd += ');'
@@ -353,11 +353,11 @@ class EdifyGenerator(object):
       self.script.append('set_perm_recursive(%d, %d, 0%o, 0%o, "%s");'
                          % (uid, gid, dmode, fmode, fn))
     else:
+      if capabilities is None:
+        capabilities = "0x0"
       cmd = 'set_metadata_recursive("%s", "uid", %d, "gid", %d, ' \
-          '"dmode", 0%o, "fmode", 0%o' \
-          % (fn, uid, gid, dmode, fmode)
-      if capabilities is not None:
-        cmd += ', "capabilities", "%s"' % ( capabilities )
+          '"dmode", 0%o, "fmode", 0%o, "capabilities", %s' \
+          % (fn, uid, gid, dmode, fmode, capabilities)
       if selabel is not None:
         cmd += ', "selabel", "%s"' % selabel
       cmd += ');'

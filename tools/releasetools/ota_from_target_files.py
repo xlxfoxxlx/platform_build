@@ -18,88 +18,65 @@
 Given a target-files zipfile, produces an OTA package that installs
 that build.  An incremental OTA is produced if -i is given, otherwise
 a full OTA is produced.
-
 Usage:  ota_from_target_files [flags] input_target_files output_ota_package
-
   --board_config  <file>
       Deprecated.
-
   -k (--package_key) <key> Key to use to sign the package (default is
       the value of default_system_dev_certificate from the input
       target-files's META/misc_info.txt, or
       "build/target/product/security/testkey" if that value is not
       specified).
-
       For incremental OTAs, the default value is based on the source
       target-file, not the target build.
-
   -i  (--incremental_from)  <file>
       Generate an incremental OTA using the given target-files zip as
       the starting build.
-
   --full_radio
       When generating an incremental OTA, always include a full copy of
       radio image. This option is only meaningful when -i is specified,
       because a full radio is always included in a full OTA if applicable.
-
  --full_bootloader
       When generating an incremental OTA, always include a full copy of
       bootloader image. This option is only meaningful when -i is specified,
       because a full bootloader is always included in a full OTA if applicable.
-
   -v  (--verify)
       Remount and verify the checksums of the files written to the
       system and vendor (if used) partitions.  Incremental builds only.
-
   -o  (--oem_settings)  <file>
       Use the file to specify the expected OEM-specific properties
       on the OEM partition of the intended device.
-
   -w  (--wipe_user_data)
       Generate an OTA package that will wipe the user data partition
       when installed.
-
   -n  (--no_prereq)
       Omit the timestamp prereq check normally included at the top of
       the build scripts (used for developer OTA packages which
       legitimately need to go back and forth).
-
   -e  (--extra_script)  <file>
       Insert the contents of file at the end of the update script.
-
   -a  (--aslr_mode)  <on|off>
       Specify whether to turn on ASLR for the package (on by default).
-
   -2  (--two_step)
       Generate a 'two-step' OTA package, where recovery is updated
       first, so that any changes made to the system partition are done
       using the new recovery (new kernel, etc.).
-
   --block
       Generate a block-based OTA if possible.  Will fall back to a
       file-based OTA if the target_files is older and doesn't support
       block-based OTAs.
-
   -b  (--binary)  <file>
       Use the given binary as the update-binary in the output package,
       instead of the binary in the build's target_files.  Use for
       development only.
-
   -t  (--worker_threads) <int>
       Specifies the number of worker-threads that will be used when
       generating patches for incremental updates (defaults to 3).
-
+  --override_device <device>
+      Override device-specific asserts. Can be a comma-separated list.
+ 
   --stash_threshold <float>
       Specifies the threshold that will be used to compute the maximum
       allowed stash size (defaults to 0.8).
-
-  --backup <boolean>
-      Enable or disable the execution of backuptool.sh.
-      Disabled by default.
-
-  --override_device <device>
-      Override device-specific asserts. Can be a comma-separated list.
-
 """
 
 import sys
@@ -138,12 +115,12 @@ OPTIONS.updater_binary = None
 OPTIONS.oem_source = None
 OPTIONS.fallback_to_full = True
 OPTIONS.full_radio = False
+OPTIONS.override_device = 'auto'
+OPTIONS.backuptool = True
 OPTIONS.full_bootloader = False
 # Stash size cannot exceed cache_size * threshold.
 OPTIONS.cache_size = None
 OPTIONS.stash_threshold = 0.8
-OPTIONS.backuptool = True
-OPTIONS.override_device = 'auto'
 
 def MostPopularKey(d, default):
   """Given a dict, return the key corresponding to the largest
@@ -158,7 +135,7 @@ def MostPopularKey(d, default):
 def IsSymlink(info):
   """Return true if the zipfile.ZipInfo object passed in represents a
   symlink."""
-  return (info.external_attr >> 16) & 0o770000 == 0o120000
+  return (info.external_attr >> 16) == 0o120777
 
 def IsRegular(info):
   """Return true if the zipfile.ZipInfo object passed in represents a
@@ -283,7 +260,6 @@ class Item(object):
     all children and determine the best strategy for using set_perm_recursive
     and set_perm to correctly chown/chmod all the files to their desired
     values.  Recursively calls itself for all descendants.
-
     Returns a dict of {(uid, gid, dmode, fmode, selabel, capabilities): count}
     counting up all descendants of this node.  (dmode or fmode may be None.)
     Also sets the best_subtree of each directory Item to the (uid, gid, dmode,
@@ -426,7 +402,7 @@ def AppendAssertions(script, info_dict, oem_dict=None):
     if OPTIONS.override_device == "auto":
       device = GetBuildProp("ro.product.device", info_dict)
     else:
-      device = OPTIONS.override_device
+      device = OPTIONS.override_device    
     script.AssertDevice(device)
   else:
     if oem_dict is None:
@@ -457,6 +433,7 @@ def GetOemProperty(name, oem_props, oem_dict, info_dict):
   if oem_props is not None and name in oem_props:
     return oem_dict[name]
   return GetBuildProp(name, info_dict)
+
 
 def CalculateFingerprint(oem_props, oem_dict, info_dict):
   if oem_props is None:
@@ -543,7 +520,7 @@ def WriteFullOTAPackage(input_zip, output_zip):
       info_dict=OPTIONS.info_dict)
 
   has_recovery_patch = HasRecoveryPatch(input_zip)
-  block_based = OPTIONS.block_based and has_recovery_patch
+  block_based = OPTIONS.block_based
 
   #if not OPTIONS.omit_prereq:
   #  ts = GetBuildProp("ro.build.date.utc", OPTIONS.info_dict)
@@ -573,8 +550,8 @@ def WriteFullOTAPackage(input_zip, output_zip):
   #    complete script normally
   #    (allow recovery to mark itself finished and reboot)
 
-  recovery_img = common.GetBootableImage("recovery.img", "recovery.img",
-                                         OPTIONS.input_tmp, "RECOVERY")
+  #recovery_img = common.GetBootableImage("recovery.img", "recovery.img",
+  #                                       OPTIONS.input_tmp, "RECOVERY")
   if OPTIONS.two_step:
     if not OPTIONS.info_dict.get("multistage_support", None):
       assert False, "two-step packages not supported by this build"
@@ -593,9 +570,27 @@ reboot_now("%(bcb_dev)s", "recovery");
 else if get_stage("%(bcb_dev)s") == "3/3" then
 """ % bcb_dev)
 
-  # Dump fingerprints
-  #script.Print("Target: %s" % CalculateFingerprint(
-  #    oem_props, oem_dict, OPTIONS.info_dict))
+  script.AppendExtra("ifelse(is_mounted(\"/system\"), unmount(\"/system\"));")
+  device_specific.FullOTA_InstallBegin()
+  
+  if OPTIONS.backuptool:
+    if block_based:
+      common.ZipWriteStr(output_zip, "system/bin/backuptool.sh",
+                     ""+input_zip.read("SYSTEM/bin/backuptool.sh"))
+      common.ZipWriteStr(output_zip, "system/bin/backuptool.functions",
+                     ""+input_zip.read("SYSTEM/bin/backuptool.functions"))
+    script.Mount("/system")
+    script.Print("Please wait... Running backup")
+    script.RunBackup("backup")
+    script.Unmount("/system")
+
+  system_progress = 0.75
+
+  if OPTIONS.wipe_user_data:
+    system_progress -= 0.1
+  if HasVendorPartition(input_zip):
+    system_progress -= 0.1
+    
   script.Print("-----------------------------------------------------------")
   script.Print("        / AAAAAA  / OOOOOO   /ssssss /ii| /PPPPPP          ")
   script.Print("       / AA__  AA/ OO__  OO /SS__ SS||__/| PP__ PP         ")
@@ -606,23 +601,12 @@ else if get_stage("%(bcb_dev)s") == "3/3" then
   script.Print("       | AA  | AA|  OOOOOO/| SSSSSS/ | ii| PP              ")
   script.Print("       |__/  |__/ \______/  \______/ |__/|__/              ")
   script.Print("-----------------------------------------------------------")
+  device = GetBuildProp("ro.product.device", OPTIONS.info_dict)
+  model = GetBuildProp("ro.product.model", OPTIONS.info_dict)
+  modver = GetBuildProp("ro.aosip.version", OPTIONS.info_dict)
   script.Print(" ")
-
-  script.AppendExtra("ifelse(is_mounted(\"/system\"), unmount(\"/system\"));")
-  device_specific.FullOTA_InstallBegin()
-
-  if OPTIONS.backuptool:
-    script.Mount("/system")
-    script.Print("Running backup tool...")
-    script.RunBackup("backup")
-    script.Unmount("/system")
-
-  system_progress = 0.75
-
-  if OPTIONS.wipe_user_data:
-    system_progress -= 0.1
-  if HasVendorPartition(input_zip):
-    system_progress -= 0.1
+  script.Print("Device: %s (%s)"%(model, device))
+  script.Print("Version: %s"%(modver)); 
 
   if "selinux_fc" in OPTIONS.info_dict:
     WritePolicyConfig(OPTIONS.info_dict["selinux_fc"], output_zip)
@@ -659,8 +643,8 @@ else if get_stage("%(bcb_dev)s") == "3/3" then
       common.ZipWriteStr(output_zip, "recovery/" + fn, data)
       system_items.Get("system/" + fn)
 
-    common.MakeRecoveryPatch(OPTIONS.input_tmp, output_sink,
-                             recovery_img, boot_img)
+#    common.MakeRecoveryPatch(OPTIONS.input_tmp, output_sink,
+#                             recovery_img, boot_img)
 
     system_items.GetMetadata(input_zip)
     system_items.Get("system").SetPermissions(script)
@@ -687,30 +671,24 @@ else if get_stage("%(bcb_dev)s") == "3/3" then
 
   common.CheckSize(boot_img.data, "boot.img", OPTIONS.info_dict)
   common.ZipWriteStr(output_zip, "boot.img", boot_img.data)
-
+  
   if OPTIONS.backuptool:
     script.ShowProgress(0.02, 10)
-
     if block_based:
-    	script.Mount("/system")
-        script.Print("Restoring system...")
+      script.Mount("/system")
     script.RunBackup("restore")
-
+    script.Print("Restoring backup...")
     if block_based:
       script.Unmount("/system")
 
-  if block_based:
-    script.Print("Flashing SuperSU...")
-    common.ZipWriteStr(output_zip, "supersu/supersu.zip",
-                   ""+input_zip.read("SYSTEM/addon.d/UPDATE-SuperSU.zip"))
-    script.Mount("/system")
-    script.FlashSuperSU()
-
-  if block_based:
-    script.Unmount("/system")
-
   script.ShowProgress(0.05, 5)
+  script.Print("Flashing AOSIP...")
   script.WriteRawImage("/boot", "boot.img")
+
+  script.Print("Flashing SuperSU...")
+  common.ZipWriteStr(output_zip, "supersu/supersu.zip",
+                 ""+input_zip.read("SYSTEM/addon.d/UPDATE-SuperSU.zip"))
+  script.FlashSuperSU()
 
   script.ShowProgress(0.2, 10)
   device_specific.FullOTA_InstallEnd()
@@ -724,6 +702,7 @@ else if get_stage("%(bcb_dev)s") == "3/3" then
     script.Mount("/system")
 
   script.UnmountAll()
+  script.Print("Flash Complete!")  
 
   if OPTIONS.wipe_user_data:
     script.ShowProgress(0.1, 10)
@@ -1248,12 +1227,13 @@ def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip):
   updating_boot = (not OPTIONS.two_step and
                    (source_boot.data != target_boot.data))
 
-  source_recovery = common.GetBootableImage(
-      "/tmp/recovery.img", "recovery.img", OPTIONS.source_tmp, "RECOVERY",
-      OPTIONS.source_info_dict)
-  target_recovery = common.GetBootableImage(
-      "/tmp/recovery.img", "recovery.img", OPTIONS.target_tmp, "RECOVERY")
-  updating_recovery = (source_recovery.data != target_recovery.data)
+#  source_recovery = common.GetBootableImage(
+#      "/tmp/recovery.img", "recovery.img", OPTIONS.source_tmp, "RECOVERY",
+#      OPTIONS.source_info_dict)
+#  target_recovery = common.GetBootableImage(
+#      "/tmp/recovery.img", "recovery.img", OPTIONS.target_tmp, "RECOVERY")
+#  updating_recovery = (source_recovery.data != target_recovery.data)
+  updating_recovery = false
 
   # Here's how we divide up the progress bar:
   #  0.1 for verifying the start state (PatchCheck calls)
@@ -1600,16 +1580,14 @@ def main(argv):
       OPTIONS.updater_binary = a
     elif o in ("--no_fallback_to_full",):
       OPTIONS.fallback_to_full = False
+    elif o in ("--override_device"):
+      OPTIONS.override_device = a
     elif o == "--stash_threshold":
       try:
         OPTIONS.stash_threshold = float(a)
       except ValueError:
         raise ValueError("Cannot parse value %r for option %r - expecting "
                          "a float" % (a, o))
-    elif o in ("--backup"):
-      OPTIONS.backuptool = bool(a.lower() == 'true')
-    elif o in ("--override_device"):
-      OPTIONS.override_device = a
     else:
       return False
     return True
@@ -1634,10 +1612,8 @@ def main(argv):
                                  "oem_settings=",
                                  "verify",
                                  "no_fallback_to_full",
-                                 "stash_threshold=",
-                                 "backup=",
-                                 "override_device="],
-  				extra_option_handler=option_handler)
+								  "stash_threshold=",
+                             "override_device="], extra_option_handler=option_handler)
 
   if len(args) != 2:
     common.Usage(__doc__)
