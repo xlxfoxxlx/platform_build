@@ -134,7 +134,7 @@ def SignApk(data, keyname, pw):
 
   signed = tempfile.NamedTemporaryFile()
 
-  common.SignFile(unsigned.name, signed.name, keyname, pw, align=4)
+  common.SignFile(unsigned.name, signed.name, keyname, pw)
 
   data = signed.read()
   unsigned.close()
@@ -213,6 +213,10 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
         write_to_temp(info.filename, info.external_attr, new_data)
     elif info.filename.endswith("mac_permissions.xml"):
       print "rewriting %s with new keys." % (info.filename,)
+      new_data = ReplaceCerts(data)
+      common.ZipWriteStr(output_tf_zip, out_info, new_data)
+    elif info.filename.startswith("SYSTEM/etc/permissions/"):
+      print("rewriting %s with new keys." % info.filename)
       new_data = ReplaceCerts(data)
       common.ZipWriteStr(output_tf_zip, out_info, new_data)
     elif info.filename in ("SYSTEM/recovery-from-boot.p",
