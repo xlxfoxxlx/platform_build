@@ -73,7 +73,7 @@ Usage:  ota_from_target_files [flags] input_target_files output_ota_package
       generating patches for incremental updates (defaults to 3).
   --override_device <device>
       Override device-specific asserts. Can be a comma-separated list.
- 
+
   --stash_threshold <float>
       Specifies the threshold that will be used to compute the maximum
       allowed stash size (defaults to 0.8).
@@ -402,7 +402,7 @@ def AppendAssertions(script, info_dict, oem_dict=None):
     if OPTIONS.override_device == "auto":
       device = GetBuildProp("ro.product.device", info_dict)
     else:
-      device = OPTIONS.override_device    
+      device = OPTIONS.override_device
     script.AssertDevice(device)
   else:
     if oem_dict is None:
@@ -572,7 +572,7 @@ else if get_stage("%(bcb_dev)s") == "3/3" then
 
   script.AppendExtra("ifelse(is_mounted(\"/system\"), unmount(\"/system\"));")
   device_specific.FullOTA_InstallBegin()
-  
+
   if OPTIONS.backuptool:
     if block_based:
       common.ZipWriteStr(output_zip, "system/bin/backuptool.sh",
@@ -590,23 +590,23 @@ else if get_stage("%(bcb_dev)s") == "3/3" then
     system_progress -= 0.1
   if HasVendorPartition(input_zip):
     system_progress -= 0.1
-    
-  script.Print("-----------------------------------------------------------")
-  script.Print("        / AAAAAA  / OOOOOO   /ssssss /ii| /PPPPPP          ")
-  script.Print("       / AA__  AA/ OO__  OO /SS__ SS||__/| PP__ PP         ")
-  script.Print("       | AA  \ AA| OO  \ OO| SS  \__/ /ii| PP  \ PP        ")
-  script.Print("       | AAAAAAAA| OO  | OO|  SSSSSS | ii| PPPPPPP/        ")
-  script.Print("       | AA__  AA| OO  | OO \____  SS| ii| PP____/         ")
-  script.Print("       | AA  | AA| OO  | OO /SS  \ SS| ii| PP              ")
-  script.Print("       | AA  | AA|  OOOOOO/| SSSSSS/ | ii| PP              ")
-  script.Print("       |__/  |__/ \______/  \______/ |__/|__/              ")
-  script.Print("-----------------------------------------------------------")
+
+  script.Print("--------------------------------------------------")
+  script.Print("    / AAAAAA  / OOOOOO   /ssssss /ii| /PPPPPP     ")
+  script.Print("   / AA__  AA/ OO__  OO /SS__ SS||__/| PP__ PP    ")
+  script.Print("   | AA  \ AA| OO  \ OO| SS  \__/ /ii| PP  \ PP   ")
+  script.Print("   | AAAAAAAA| OO  | OO|  SSSSSS | ii| PPPPPPP/   ")
+  script.Print("   | AA__  AA| OO  | OO \____  SS| ii| PP____/    ")
+  script.Print("   | AA  | AA| OO  | OO /SS  \ SS| ii| PP         ")
+  script.Print("   | AA  | AA|  OOOOOO/| SSSSSS/ | ii| PP         ")
+  script.Print("   |__/  |__/ \______/  \______/ |__/|__/         ")
+  script.Print("--------------------------------------------------")
   device = GetBuildProp("ro.product.device", OPTIONS.info_dict)
   model = GetBuildProp("ro.product.model", OPTIONS.info_dict)
   modver = GetBuildProp("ro.aosip.version", OPTIONS.info_dict)
   script.Print(" ")
   script.Print("Device: %s (%s)"%(model, device))
-  script.Print("Version: %s"%(modver)); 
+  script.Print("Version: %s"%(modver));
 
   if "selinux_fc" in OPTIONS.info_dict:
     WritePolicyConfig(OPTIONS.info_dict["selinux_fc"], output_zip)
@@ -671,7 +671,7 @@ else if get_stage("%(bcb_dev)s") == "3/3" then
 
   common.CheckSize(boot_img.data, "boot.img", OPTIONS.info_dict)
   common.ZipWriteStr(output_zip, "boot.img", boot_img.data)
-  
+
   if OPTIONS.backuptool:
     script.ShowProgress(0.02, 10)
     if block_based:
@@ -702,7 +702,7 @@ else if get_stage("%(bcb_dev)s") == "3/3" then
     script.Mount("/system")
 
   script.UnmountAll()
-  script.Print("Flash Complete!")  
+  script.Print("Flash Complete!")
 
   if OPTIONS.wipe_user_data:
     script.ShowProgress(0.1, 10)
