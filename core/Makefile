@@ -1865,9 +1865,9 @@ $(INTERNAL_OTA_PACKAGE_TARGET): $(BUILT_TARGET_FILES_PACKAGE)
 
 CUSTOM_TARGET_PACKAGE := $(PRODUCT_OUT)/$(TARGET_PRODUCT).zip
 
-.PHONY: otapackage bacon
+.PHONY: otapackage kronic
 otapackage: $(INTERNAL_OTA_PACKAGE_TARGET)
-bacon: otapackage
+kronic: otapackage
 	$(hide) ln -f $(INTERNAL_OTA_PACKAGE_TARGET) $(CUSTOM_TARGET_PACKAGE)
 	$(hide) $(MD5SUM) $(CUSTOM_TARGET_PACKAGE) > $(CUSTOM_TARGET_PACKAGE).md5sum
 	@echo -e ${CL_YLW}"Package complete: $(CUSTOM_TARGET_PACKAGE)"${CL_RST}
