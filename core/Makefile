@@ -1879,16 +1879,15 @@ kronic: otapackage
 	@echo -e ""
 	@echo -e "${cya}Building ${bldcya}AOSiP ${txtrst}";
 	@echo -e ""
-	@echo -e ${CL_MAG}"                  ▄▄▄·       .▄▄ · ▪   ▄▄▄·                "
-	@echo -e ${CL_MAG}"                 ▐█ ▀█ ▪     ▐█ ▀. ██ ▐█ ▄█                "
-	@echo -e ${CL_MAG}"                 ▄█▀▀█  ▄█▀▄ ▄▀▀▀█▄▐█· ██▀·                "
-	@echo -e ${CL_MAG}"                 ▐█ ▪▐▌▐█▌.▐▌▐█▄▪▐█▐█▌▐█▪·•                "
-	@echo -e ${CL_MAG}"                  ▀  ▀  ▀█▄▀▪ ▀▀▀▀ ▀▀▀.▀                   "
+	@echo -e ${CL_GRN}"            ▄▄▄·       .▄▄ · ▪   ▄▄▄·          "
+	@echo -e ${CL_GRN}"           ▐█ ▀█ ▪     ▐█ ▀. ██ ▐█ ▄█          "
+	@echo -e ${CL_GRN}"           ▄█▀▀█  ▄█▀▄ ▄▀▀▀█▄▐█· ██▀·          "
+	@echo -e ${CL_GRN}"           ▐█ ▪▐▌▐█▌.▐▌▐█▄▪▐█▐█▌▐█▪·•          "
+	@echo -e ${CL_GRN}"            ▀  ▀  ▀█▄▀▪ ▀▀▀▀ ▀▀▀.▀             "
 	@echo -e ""
-	@echo -e ${CL_CYN}"zip: "${CL_MAG} $(CUSTOM_TARGET_PACKAGE)${CL_RST}
-	@echo -e ${CL_CYN}"md5: "${CL_MAG}" `cat $(CUSTOM_TARGET_PACKAGE).md5sum | cut -d ' ' -f 1`"${CL_RST}
-	@echo -e ${CL_CYN}"size:"${CL_MAG}" `ls -lah $(CUSTOM_TARGET_PACKAGE) | cut -d ' ' -f 5`"${CL_RST}
-	@echo -e ${CL_CYN}"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"${CL_RST}
+	@echo -e ${CL_MAG}"zip: "${CL_CYN} $(CUSTOM_TARGET_PACKAGE)${CL_RST}
+	@echo -e ${CL_MAG}"md5: "${CL_CYN}" `cat $(CUSTOM_TARGET_PACKAGE).md5sum | cut -d ' ' -f 1`"${CL_RST}
+	@echo -e ${CL_MAG}"size:"${CL_CYN}" `ls -lah $(CUSTOM_TARGET_PACKAGE) | cut -d ' ' -f 5`"${CL_RST}
 	@echo -e ""
 
 # -----------------------------------------------------------------
