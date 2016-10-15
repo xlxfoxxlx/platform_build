@@ -32,7 +32,6 @@ PRODUCT_PACKAGES += \
     DeskClock \
     DocumentsUI \
     DownloadProviderUi \
-    ExactCalculator \
     ExternalStorageProvider \
     FusedLocation \
     InputDevices \
@@ -47,7 +46,6 @@ PRODUCT_PACKAGES += \
     PrintSpooler \
     PrintRecommendationService \
     ProxyHandler \
-    QuickSearchBox \
     Settings \
     SharedStorageBackup \
     Telecom \
