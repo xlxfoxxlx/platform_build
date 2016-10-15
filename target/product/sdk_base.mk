@@ -24,18 +24,10 @@ PRODUCT_PACKAGES := \
 	Dialer \
 	EmulatorSmokeTests \
 	Fallback \
-	Gallery \
-	GestureBuilder \
-	LegacyCamera \
 	librs_jni \
-	libwnndict \
-	libWnnEngDic \
-	libWnnJpnDic \
 	LiveWallpapersPicker \
 	Mms \
 	Music \
-	OpenWnn \
-	Protips \
 	rild \
 	SdkSetup \
 	SmokeTest \
