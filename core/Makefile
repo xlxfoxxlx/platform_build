@@ -2159,24 +2159,24 @@ kronic: otapackage
 	$(hide) $(MD5SUM) $(CUSTOM_TARGET_PACKAGE) > $(CUSTOM_TARGET_PACKAGE).md5sum
 	@echo -e ${CL_YLW}"Package complete: $(CUSTOM_TARGET_PACKAGE)"${CL_RST}
 	@echo -e ""
-        @echo -e "${cya}Building ${bldcya}AOSiP ${txtrst}";
-        @echo -e ""
-        @echo -e ${CL_CYN}"-----------------------------------------------------------"
-        @echo -e ${CL_MAG}"        / AAAAAA  / OOOOOO   /ssssss /ii| /PPPPPP          "
-        @echo -e ${CL_MAG}"       / AA__  AA/ OO__  OO /SS__ SS||__/| PP__ PP         "
-        @echo -e ${CL_MAG}"       | AA  \ AA| OO  \ OO| SS  \__/ /ii| PP  \ PP        "
-        @echo -e ${CL_MAG}"       | AAAAAAAA| OO  | OO|  SSSSSS | ii| PPPPPPP/        "
-        @echo -e ${CL_MAG}"       | AA__  AA| OO  | OO \____  SS| ii| PP____/         "
-        @echo -e ${CL_MAG}"       | AA  | AA| OO  | OO /SS  \ SS| ii| PP              "
-        @echo -e ${CL_MAG}"       | AA  | AA|  OOOOOO/| SSSSSS/ | ii| PP              "
-        @echo -e ${CL_MAG}"       |__/  |__/ \______/  \______/ |__/|__/              "
-        @echo -e ${CL_CYN}"-----------------------------------------------------------"
-        @echo -e ""
-        @echo -e ${CL_CYN}"zip: "${CL_MAG} $(CUSTOM_TARGET_PACKAGE)${CL_RST}
-        @echo -e ${CL_CYN}"md5: "${CL_MAG}" `cat $(CUSTOM_TARGET_PACKAGE).md5sum | cut -d ' ' -f 1`"${CL_RST}
-        @echo -e ${CL_CYN}"size:"${CL_MAG}" `ls -lah $(CUSTOM_TARGET_PACKAGE) | cut -d ' ' -f 5`"${CL_RST}
-        @echo -e ${CL_CYN}"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"${CL_RST}
-        @echo -e ""
+	@echo -e "${cya}Building ${bldcya}AOSiP ${txtrst}"
+	@echo -e ""
+	@echo -e ${CL_CYN}"-----------------------------------------------------------"
+	@echo -e ${CL_MAG}"        / AAAAAA  / OOOOOO   /ssssss /ii| /PPPPPP          "
+	@echo -e ${CL_MAG}"       / AA__  AA/ OO__  OO /SS__ SS||__/| PP__ PP         "
+	@echo -e ${CL_MAG}"       | AA  \ AA| OO  \ OO| SS  \__/ /ii| PP  \ PP        "
+	@echo -e ${CL_MAG}"       | AAAAAAAA| OO  | OO|  SSSSSS | ii| PPPPPPP/        "
+	@echo -e ${CL_MAG}"       | AA__  AA| OO  | OO \____  SS| ii| PP____/         "
+	@echo -e ${CL_MAG}"       | AA  | AA| OO  | OO /SS  \ SS| ii| PP              "
+	@echo -e ${CL_MAG}"       | AA  | AA|  OOOOOO/| SSSSSS/ | ii| PP              "
+	@echo -e ${CL_MAG}"       |__/  |__/ \______/  \______/ |__/|__/              "
+	@echo -e ${CL_CYN}"-----------------------------------------------------------"
+	@echo -e ""
+	@echo -e ${CL_CYN}"zip: "${CL_MAG} $(CUSTOM_TARGET_PACKAGE)${CL_RST}
+	@echo -e ${CL_CYN}"md5: "${CL_MAG}" `cat $(CUSTOM_TARGET_PACKAGE).md5sum | cut -d ' ' -f 1`"${CL_RST}
+	@echo -e ${CL_CYN}"size:"${CL_MAG}" `ls -lah $(CUSTOM_TARGET_PACKAGE) | cut -d ' ' -f 5`"${CL_RST}
+	@echo -e ${CL_CYN}"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"${CL_RST}
+	@echo -e ""
 
 endif    # build_ota_package
 # -----------------------------------------------------------------
