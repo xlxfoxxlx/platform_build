@@ -120,6 +120,7 @@ def get_remote(manifest=None, remote_name=None):
 
 
 def get_revision(manifest=None, p="build"):
+    return custom_default_revision
     m = manifest or load_manifest(default_manifest)
     project = None
     for proj in m.findall('project'):
