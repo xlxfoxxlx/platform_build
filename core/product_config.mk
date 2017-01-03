@@ -186,7 +186,7 @@ all_product_configs := $(call get-product-makefiles,\
 else
 
 ifneq ($(CUSTOM_BUILD),)
-    all_product_configs := $(shell ls device/*/$(CUSTOM_BUILD)/aosip.mk)
+    all_product_configs := $(shell ls vendor/aosip/products/aosip_$(CUSTOM_BUILD).mk)
   else
     # Read in all of the product definitions specified by the AndroidProducts.mk
     # files in the tree.
