@@ -663,11 +663,12 @@ else if get_stage("%(bcb_dev)s") == "3/3" then
   script.Print("         Are you ready for the Illusion?          ")
   script.Print("--------------------------------------------------")
   script.Print(" ")
-  device = GetBuildProp("ro.product.device", OPTIONS.info_dict)
+  device = GetBuildProp("ro.aosip.device", OPTIONS.info_dict)
   modver = GetBuildProp("ro.aosip.version", OPTIONS.info_dict)
   if GetBuildProp("ro.product.model", OPTIONS.info_dict) is not None:
     model = GetBuildProp("ro.product.model", OPTIONS.info_dict)
     script.Print("Device: %s (%s)"%(model, device))
+    script.Print("Version: %s"%(modver))
   else:
   	script.Print("Device: %s "%(device))
   script.Print("Version: %s"%(modver));
@@ -682,14 +683,9 @@ else if get_stage("%(bcb_dev)s") == "3/3" then
       common.ZipWriteStr(output_zip, "system/bin/backuptool.functions",
                      ""+input_zip.read("SYSTEM/bin/backuptool.functions"))
     script.Mount("/system")
+    script.Print("Running backup tool...")
     script.RunBackup("backup")
     script.Unmount("/system")
-
-#  if OPTIONS.backuptool:
-#    script.Mount("/system")
-#    script.Print("Running backup tool...")
-#    script.RunBackup("backup")
-#    script.Unmount("/system")
 
   system_progress = 0.75
 
