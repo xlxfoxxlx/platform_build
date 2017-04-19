@@ -668,7 +668,6 @@ else if get_stage("%(bcb_dev)s") == "3/3" then
   if GetBuildProp("ro.product.model", OPTIONS.info_dict) is not None:
     model = GetBuildProp("ro.product.model", OPTIONS.info_dict)
     script.Print("Device: %s (%s)"%(model, device))
-    script.Print("Version: %s"%(modver))
   else:
   	script.Print("Device: %s "%(device))
   script.Print("Version: %s"%(modver));
