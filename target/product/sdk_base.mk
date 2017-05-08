@@ -24,6 +24,7 @@ PRODUCT_PACKAGES := \
 	Dialer \
 	EmulatorSmokeTests \
 	Fallback \
+	Gallery \
 	GestureBuilder \
 	Launcher3 \
 	LegacyCamera \
@@ -44,14 +45,6 @@ PRODUCT_PACKAGES := \
 	SystemUI \
 	EasterEgg \
 	WidgetPreview
-
-
-ifneq ($(filter jdc_oneplus2,$(TARGET_PRODUCT)),)
-
-PRODUCT_PACKAGES += \
-Gallery2
-
-endif
 
 # Define the host tools and libs that are parts of the SDK.
 -include sdk/build/product_sdk.mk

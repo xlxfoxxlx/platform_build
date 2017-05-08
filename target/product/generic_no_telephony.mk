@@ -21,6 +21,7 @@ PRODUCT_PACKAGES := \
     Bluetooth \
     BluetoothMidiService \
     Camera2 \
+    Gallery2 \
     AudioFX \
     OneTimeInitializer \
     Provision \
@@ -33,14 +34,6 @@ PRODUCT_PACKAGES += \
     clatd.conf \
     pppd \
     screenrecord
-
-
-ifneq ($(filter jdc_oneplus2,$(TARGET_PRODUCT)),)
-
-PRODUCT_PACKAGES += \
-Gallery2
-
-endif
 
 PRODUCT_PACKAGES += \
     librs_jni
